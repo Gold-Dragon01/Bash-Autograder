@@ -1,0 +1,11 @@
+true
+zip rar
+c cpp python
+100
+5
+/home/user/Bash_AutoGrader/sample_submissions
+2005001 2005010
+/home/user/Bash_AutoGrader/sample_submissions/expected_output.txt
+10
+/home/user/Bash_AutoGrader/plagiarism.txt
+100
