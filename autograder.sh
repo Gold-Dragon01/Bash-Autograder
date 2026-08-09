@@ -2,8 +2,24 @@
 
 readonly TIMEOUT_SECONDS=10
 
-filename=$2
+#filename=$2
 #echo $filename
+usage() {
+    echo "Usage: $0 -f <conditions_file>"
+    exit 1
+}
+
+while getopts "f:" opt; do
+    case $opt in
+        f) filename="$OPTARG" ;;
+        *) usage ;;
+    esac
+done
+
+if [ -z "$filename" ]; then
+    usage
+fi
+
 
 mapfile -t conditions < "$filename"
 
