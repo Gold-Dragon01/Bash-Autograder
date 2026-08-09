@@ -13,6 +13,9 @@ Manual grading of programming assignments is tedious and error-prone, especially
 - **Archive handling** — extracts `zip`, `rar`, and `tar` archives with configurable toggle
 - **Submission validation** — detects naming violations, incorrect directory structures, and unsupported file formats
 - **Output comparison** — diffs each student's output against an expected output file and applies per-mismatch penalties
+- **Execution timeout** — kills submissions that exceed a configurable time limit and marks them as TLE (Time Limit Exceeded)
+- **Compilation error handling** — catches C/C++ compilation failures and routes them to issues instead of crashing
+- **Score clamping** — prevents output mismatch penalties from pushing marks below zero
 - **Plagiarism integration** — reads a list of flagged student IDs and applies a percentage-based penalty
 - **Penalty system** — configurable deductions for wrong output, submission guideline violations, and plagiarism
 - **Structured reporting** — generates a `marks.csv` with per-student breakdowns of marks, deductions, and remarks
@@ -23,7 +26,7 @@ Manual grading of programming assignments is tedious and error-prone, especially
 ```
 ┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
 │  Config File     │────▶│  Autograder      │────▶│  marks.csv       │
-│  (conditions)    │     │  (2005024.sh)    │     │  (grade report)  │
+│  (conditions)    │     │  autograder.sh   │     │  (grade report)  │
 └──────────────────┘     └────────┬─────────┘     └──────────────────┘
                                   │
                     ┌─────────────┼─────────────┐
@@ -60,11 +63,11 @@ zip tar
 c cpp python
 100
 5
-/home/user/assignments/hw1
+/home/user/Bash_AutoGrader/sample_submissions
 2005001 2005030
-/home/user/assignments/hw1/expected_output.txt
+/home/user/Bash_AutoGrader/sample_submissions/expected_output.txt
 10
-/home/user/assignments/hw1/plagiarism.txt
+/home/user/Bash_AutoGrader/plagiarism.txt
 100
 ```
 
@@ -72,10 +75,16 @@ c cpp python
 
 ```bash
 chmod +x autograder.sh
-./autograder.sh -f conditions.txt
+./autograder.sh -f sample_input.txt
+./autograder.sh -h
 ```
 
-The script expects the configuration file path as the second positional argument.
+**Flags:**
+
+| Flag | Description | Required |
+|------|-------------|----------|
+| `-f` | Path to the conditions file | Yes |
+| `-h` / `--help` | Show usage instructions | No |
 
 ## Output
 
@@ -104,6 +113,8 @@ The `remarks` column in the report uses coded labels:
 | `issue case #2` | Archive format not recognized or extraction failed             |
 | `issue case #3` | Source file inside the archive has wrong name or language       |
 | `issue case #4` | Extracted directory name doesn't match the student ID          |
+| `TLE`           | Program exceeded the execution time limit                      |
+| `compilation_error` | C/C++ source failed to compile                            |
 | `missing submission` | No file or directory matching the student ID was found   |
 | `plagiarism detected` | Student ID appears in the plagiarism file               |
 
@@ -122,12 +133,12 @@ The `remarks` column in the report uses coded labels:
 bash-autograder/
 ├── autograder.sh          # Main grading script
 ├── conditions.txt         # Sample configuration file
-├── expected_output.txt    # Sample expected output
 ├── plagiarism.txt         # Sample plagiarism ID list
 ├── sample_submissions/    # Example student submissions for testing
 │   ├── 2005001.zip
 │   ├── 2005002.tar
 │   └── 2005003.c
+    ├── expected_output.txt    # Sample expected output
 └── README.md
 ```
 
@@ -135,10 +146,9 @@ bash-autograder/
 
 - **No input file support** — programs that require stdin input are not currently handled
 - **Single-file submissions only** — multi-file projects are not supported
-- **No timeout mechanism** — infinite loops in student code will hang the grader
 - **Basic diff** — output comparison uses sorted line-level diff, not semantic comparison
 
-Potential improvements: adding execution timeouts, support for stdin test cases, parallel grading for large classes, and an HTML report generator.
+Potential improvements: support for stdin test cases, parallel grading for large classes, configurable per-language timeouts, and an HTML report generator.
 
 ## License
 
