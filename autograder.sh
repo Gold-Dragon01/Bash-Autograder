@@ -9,9 +9,16 @@ usage() {
     exit 1
 }
 
-while getopts "f:" opt; do
+for arg in "$@";do
+    if [[ "$arg" == "--help" ]];then
+        usage
+    fi
+done
+
+while getopts "f:h" opt;do
     case $opt in
         f) filename="$OPTARG" ;;
+        h) usage ;;
         *) usage ;;
     esac
 done
